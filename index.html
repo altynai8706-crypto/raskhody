@@ -22,6 +22,19 @@
       <p id="month-count" class="summary-note">Расходов пока нет</p>
     </section>
 
+    <section class="panel" aria-labelledby="budget-title">
+      <div class="section-heading"><h2 id="budget-title">Бюджет на месяц</h2></div>
+      <p id="budget-month" class="budget-month"></p>
+      <p id="budget-hint" class="budget-hint">Лимиты в тенге. Пустое поле — без лимита, 0 — нулевой лимит. В новом месяце задайте их заново.</p>
+      <p id="budget-storage-error" class="notice error" role="alert" hidden></p>
+      <form id="budget-form" novalidate aria-describedby="budget-hint">
+        <div id="budget-fields" class="form-grid"></div>
+        <p id="budget-error" class="error" role="alert" hidden></p>
+        <div class="form-actions"><button class="primary" type="submit">Сохранить лимиты</button></div>
+        <p id="budget-status" class="status" role="status"></p>
+      </form>
+    </section>
+
     <p id="storage-error" class="notice error" role="alert" hidden></p>
     <section class="panel" aria-labelledby="form-title">
       <div class="section-heading"><h2 id="form-title">Добавить трату</h2><span class="step" aria-hidden="true">＋</span></div>

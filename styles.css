@@ -15,6 +15,8 @@ h2 { font-size: 19px; margin: 0; letter-spacing: -.02em; }
 .summary-note { color: #d4e8d5; font-size: 13px; margin: 0; }
 .panel { border: 1px solid var(--line); border-radius: 22px; background: #fff; padding: 26px 28px; margin-bottom: 22px; }
 .section-heading { margin-bottom: 22px; }
+.budget-month { font-size: 15px; font-weight: 600; margin: -10px 0 12px; }
+.budget-hint { font-size: 13px; line-height: 1.5; color: #64766a; margin: 0 0 20px; }
 .step { color: var(--green); font-size: 25px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 label { display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; min-width: 0; }
