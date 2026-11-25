@@ -28,10 +28,13 @@
     const totals = element("dl", "budget-totals");
     const spent = element("dd");
     const remaining = element("dd");
+    const warning = element("p", "budget-warning");
+    warning.hidden = true;
+    warning.setAttribute("aria-live", "polite");
     totals.append(element("dt", "", "Потрачено"), spent, element("dt", "", "Осталось"), remaining);
-    card.append(label, totals);
+    card.append(label, totals, warning);
     $("budget-fields").append(card);
-    budgetTotals.push({ spent, remaining });
+    budgetTotals.push({ spent, remaining, warning });
     return input;
   });
   let budgets = {};
@@ -123,10 +126,15 @@
       if (expense.date.slice(0, 7) === budgetMonth) spentByCategory[expense.category] += expense.cents;
     });
     const limits = budgets[budgetMonth] || {};
-    budgetTotals.forEach(({ spent, remaining }, index) => {
+    budgetTotals.forEach(({ spent, remaining, warning }, index) => {
       const name = CATEGORIES[index];
+      const balance = limits[name] === undefined ? null : limits[name] - spentByCategory[name];
+      const overspent = balance !== null && balance < 0;
       spent.textContent = money(spentByCategory[name]);
-      remaining.textContent = limits[name] === undefined ? "Лимит не задан" : money(limits[name] - spentByCategory[name]);
+      remaining.textContent = balance === null ? "Лимит не задан" : money(balance);
+      remaining.classList.toggle("budget-overspent", overspent);
+      warning.textContent = overspent ? `Перерасход на ${money(-balance)}` : "";
+      warning.hidden = !overspent;
     });
   }
 
