@@ -13,7 +13,9 @@
   const from = $("filter-from");
   const to = $("filter-to");
   const budgetForm = $("budget-form");
+  const budgetTotals = [];
   const budgetInputs = CATEGORIES.map((name, index) => {
+    const card = element("div", "budget-category");
     const label = element("label", "", `${name} — лимит, ₸`);
     const input = element("input");
     input.id = `budget-limit-${index}`;
@@ -23,7 +25,13 @@
     input.placeholder = "Не задан";
     input.setAttribute("aria-describedby", "budget-error");
     label.append(input);
-    $("budget-fields").append(label);
+    const totals = element("dl", "budget-totals");
+    const spent = element("dd");
+    const remaining = element("dd");
+    totals.append(element("dt", "", "Потрачено"), spent, element("dt", "", "Осталось"), remaining);
+    card.append(label, totals);
+    $("budget-fields").append(card);
+    budgetTotals.push({ spent, remaining });
     return input;
   });
   let budgets = {};
@@ -54,8 +62,9 @@
   }
 
   function money(cents) {
-    const whole = Math.floor(cents / 100).toLocaleString("ru-RU");
-    return `${whole}${cents % 100 ? "," + String(cents % 100).padStart(2, "0") : ""} ₸`;
+    const absolute = Math.abs(cents);
+    const whole = Math.floor(absolute / 100).toLocaleString("ru-RU");
+    return `${cents < 0 ? "−" : ""}${whole}${absolute % 100 ? "," + String(absolute % 100).padStart(2, "0") : ""} ₸`;
   }
 
   function showMessage(id, message) {
@@ -108,10 +117,26 @@
     return changed;
   }
 
+  function renderBudgetTotals() {
+    const spentByCategory = Object.fromEntries(CATEGORIES.map((name) => [name, 0]));
+    expenses.forEach((expense) => {
+      if (expense.date.slice(0, 7) === budgetMonth) spentByCategory[expense.category] += expense.cents;
+    });
+    const limits = budgets[budgetMonth] || {};
+    budgetTotals.forEach(({ spent, remaining }, index) => {
+      const name = CATEGORIES[index];
+      spent.textContent = money(spentByCategory[name]);
+      remaining.textContent = limits[name] === undefined ? "Лимит не задан" : money(limits[name] - spentByCategory[name]);
+    });
+  }
+
   budgetForm.addEventListener("submit", (event) => {
     event.preventDefault();
     // Не сохраняем ввод прошлого месяца, даже если таймер ещё не сработал.
-    if (refreshBudgetMonth()) return;
+    if (refreshBudgetMonth()) {
+      renderBudgetTotals();
+      return;
+    }
     showMessage("budget-error", "");
     $("budget-status").textContent = "";
     budgetInputs.forEach((input) => input.removeAttribute("aria-invalid"));
@@ -142,6 +167,7 @@
       return;
     }
     budgets = next;
+    renderBudgetTotals();
     showMessage("budget-storage-error", "");
     $("budget-status").textContent = "Лимиты сохранены.";
   });
@@ -226,6 +252,7 @@
 
   function render() {
     refreshBudgetMonth();
+    renderBudgetTotals();
     const now = new Date();
     displayedDay = localDate(now);
     const month = displayedDay.slice(0, 7);
