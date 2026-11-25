@@ -25,6 +25,15 @@
     <section class="panel" aria-labelledby="budget-title">
       <div class="section-heading"><h2 id="budget-title">Бюджет на месяц</h2></div>
       <p id="budget-month" class="budget-month"></p>
+      <div class="budget-summary">
+        <dl class="budget-totals">
+          <dt>Бюджет</dt><dd id="budget-total">Бюджет не задан</dd>
+          <dt>Потрачено</dt><dd id="budget-spent">0 ₸</dd>
+          <dt>Осталось</dt><dd id="budget-remaining">Бюджет не задан</dd>
+        </dl>
+        <p id="budget-partial" class="budget-hint" hidden>Лимиты заданы не для всех категорий</p>
+        <p id="budget-warning" class="budget-warning" aria-live="polite" hidden></p>
+      </div>
       <p id="budget-hint" class="budget-hint">Лимиты в тенге. Пустое поле — без лимита, 0 — нулевой лимит. В новом месяце задайте их заново.</p>
       <p id="budget-storage-error" class="notice error" role="alert" hidden></p>
       <form id="budget-form" novalidate aria-describedby="budget-hint">

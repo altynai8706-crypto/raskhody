@@ -126,6 +126,18 @@
       if (expense.date.slice(0, 7) === budgetMonth) spentByCategory[expense.category] += expense.cents;
     });
     const limits = budgets[budgetMonth] || {};
+    const limitCount = Object.keys(limits).length;
+    const total = Object.values(limits).reduce((sum, cents) => sum + cents, 0);
+    const spent = Object.values(spentByCategory).reduce((sum, cents) => sum + cents, 0);
+    const balance = total - spent;
+    const overspent = limitCount > 0 && balance < 0;
+    $("budget-total").textContent = limitCount ? money(total) : "Бюджет не задан";
+    $("budget-spent").textContent = money(spent);
+    $("budget-remaining").textContent = limitCount ? money(balance) : "Бюджет не задан";
+    $("budget-remaining").classList.toggle("budget-overspent", overspent);
+    $("budget-partial").hidden = limitCount === CATEGORIES.length;
+    $("budget-warning").textContent = overspent ? `Перерасход на ${money(-balance)}` : "";
+    $("budget-warning").hidden = !overspent;
     budgetTotals.forEach(({ spent, remaining, warning }, index) => {
       const name = CATEGORIES[index];
       const balance = limits[name] === undefined ? null : limits[name] - spentByCategory[name];
